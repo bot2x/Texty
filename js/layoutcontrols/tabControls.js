@@ -33,11 +33,11 @@ function TabController(numTabs) {
         tabButton : null,
     }
 
-    function addFile() {
+    function incrTabs () {
         nTabs += 1;
     }
 
-    function totalFiles () {
+    function totalOpenTabs () {
         return nTabs;
     }
 
@@ -56,8 +56,8 @@ function TabController(numTabs) {
     }
 
     return {
-        addFile,
-        totalFiles,
+        incrTabs,
+        totalOpenTabs,
         selectThisTab,
         getCurrentTabRef,
     };
@@ -90,10 +90,10 @@ function tabEventHandlers () {
 
     const addTabHandler = (element) => {
 
-        console.log(tc.totalFiles());
+        console.log(tc.totalOpenTabs());
 
-        tc.addFile();
-        const fileNum = tc.totalFiles();
+        tc.incrTabs();
+        const fileNum = tc.totalOpenTabs();
 
         tab_container = document.getElementById("contain_editors");
         tablink_container = document.getElementById("contain_tablinks");
