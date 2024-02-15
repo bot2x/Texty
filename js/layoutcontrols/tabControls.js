@@ -1,10 +1,47 @@
-// import {FileController} from "./filecontrols.js";
+
+function TabController(numTabs) {
+    let nTabs = numTabs;
+    // let openTabs = [];
+    
+    //this will hold the html ref for the currently selected tab. To be used by other modules for context management.
+    let selectedTabRef = {
+        container : null,
+        tabButton : null,
+    }
+
+    function addFile() {
+        nTabs += 1;
+    }
+
+    function totalFiles () {
+        return nTabs;
+    }
+
+    function selectThisTab (tabButtonRef, doClick = true) {
+        if (doClick) {
+            tabButtonRef.click();
+            tabButtonRef.focus();
+        }
+
+        selectedTabRef.tabButton = tabButtonRef;
+        selectedTabRef.container = getContainerForTab(tabButtonRef);
+    }
+
+    function getCurrentTabRef () {
+        return selectedTabRef;
+    }
+
+    return {
+        addFile,
+        totalFiles,
+        selectThisTab,
+        getCurrentTabRef,
+    };
+}
+
 
 const openTab = (element) => {
-    // console.log(element);
-    // console.log(element.id);
-    // console.log(element.className);
-    // console.log(element.innerHTML);
+
 
     //Hide all the tabs
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -18,21 +55,18 @@ const openTab = (element) => {
         tablinks[i].style.backgroundColor = "";
     }
 
-    const tabcontentToHighlight = element.id.trim() ? element.id.trim().split("-")[1] : "";
-
-    console.log(tabcontentToHighlight);
-
-    document.getElementById(tabcontentToHighlight).style.display = "block";
-    // element.style.backgroundColor = black;
-
+    const tabcontentToHighlight = getContainerForTab(element);
+    tabcontentToHighlight.style.display = "block";
+    
+    tc.selectThisTab(element, doClick=false);
 }
 
 const addTab = (element) => {
 
-    console.log(fc.totalFiles());
+    console.log(tc.totalFiles());
 
-    fc.addFile();
-    const fileNum = fc.totalFiles();
+    tc.addFile();
+    const fileNum = tc.totalFiles();
 
     tab_container = document.getElementById("contain_editors");
     tablink_container = document.getElementById("contain_tablinks");
@@ -56,8 +90,7 @@ const addTab = (element) => {
     // document.getElementById(button_tab.id).className += " button_effect tablink";
 
     //click the newly added button to select it.
-    button_tab.click();
-    button_tab.focus();
+    tc.selectThisTab(button_tab);
 }
 
 

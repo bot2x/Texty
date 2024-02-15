@@ -25,13 +25,13 @@
         </div>
         
         
-        <script type="text/javascript" src="js/layout/filecontrols.js"></script>
-        <script type="text/javascript" src="js/layout/tablayout.js"></script>
+        <script type="text/javascript" src="js/layoutcontrols/tabControls.js"></script>
+        <!-- <script type="text/javascript" src="js/layout/tablayout.js"></script> -->
+        <script type="text/javascript" src="js/utils/tabFunctions.js"></script>
         <script>          
-            fc = FileController(2);
+            tc = TabController(2);
             
-            document.getElementById("tab-file1").click();
-            document.getElementById("tab-file1").focus();
+            tc.selectThisTab(document.getElementById("tab-file1"));
 
         </script>
     </body>
