@@ -1,7 +1,7 @@
 // Initialize variables
 var editor = document.getElementById('editor');
 var eventStack = [];
-
+console.log("TEXT",editor.innerText);
 function recordEvent(eventType,e) {
     var event = { type: eventType };
 
@@ -26,9 +26,27 @@ function recordEvent(eventType,e) {
 
     eventStack.push(event);
 
-    console.log(eventStack);
+    // console.log(eventStack);
 }
 
+
+function updateLineNumbers() {
+
+    console.log("TEXT",editor.innerText);
+    let lines = editor.innerText.split("\n");
+    let lineCount = lines.length;
+
+    let lineNumbers = "";
+    for (let i = 1; i <= lineCount; i++) {
+        lineNumbers += (i) + "\n";
+    }
+
+    editor.setAttribute("data-line", lineNumbers);
+}
+
+
+// Add oninput event listener to call updateLineNumbers function
+editor.addEventListener("input", updateLineNumbers);
 
 // Event listeners to record events
 editor.addEventListener('keydown', function(e) {

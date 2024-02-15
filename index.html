@@ -1,15 +1,55 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editable Text Editor with Line Numbers</title>
+<style>
+    #editor {
+        position: relative;
+        width: 400px;
+        border: 1px solid #ccc;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        font-family: monospace;
+    }
+    #editor .line-number {
+        position: absolute;
+        left: 0;
+        width: 30px;
+        height: 100%;
+        border-right: 1px solid #ccc;
+        text-align: right;
+        pointer-events: none;
+    }
+    #editor .content {
+        padding-left: 32px; /* Adjust as needed */
+    }
+</style>
+</head>
+<body>
+<div id="editor">
+    <div class="line-number"></div>
+    <div class="content" contenteditable="true"></div>
+</div>
 
-<html>
-    <head>
-        <title>Texty</title>
-        <link rel="stylesheet" href="index.css">
-    </head>
-    <body>
-        <div id="editor" contenteditable="true">
-            <!-- This is where the editor will live and evolve. -->
-        </div>
+<script>
+    const editor = document.getElementById("editor");
+    const content = editor.querySelector(".content");
+    const lineNumber = editor.querySelector(".line-number");
 
-    <script src="get_events.js"></script>
-    </body>
+    function updateLineNumbers() {
+        const lines = content.innerText.split("\n");
+        const lineCount = lines.length;
+        let lineNumbersHTML = "";
+        for (let i = 1; i <= lineCount; i++) {
+            lineNumbersHTML += i + "<br>";
+        }
+        lineNumber.innerHTML = lineNumbersHTML;
+    }
+
+    content.addEventListener("input", updateLineNumbers);
+    updateLineNumbers(); // Call initially to set line numbers
+</script>
+</body>
 </html>

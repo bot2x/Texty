@@ -1,7 +1,16 @@
 #editor {
-    width: 100%;
-    height: 200px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    overflow: auto;
+  position: relative;
+  width: 400px;
+  height: 200px;
+  border: 1px solid #ccc;
+  padding-left: 50px; /* Adjust as needed based on the line number width */
+  white-space: pre-wrap;
+  font-family: monospace; /* Ensures consistent character width */
+}
+
+
+#editor::before {
+  content: attr(data-line);
+  position: absolute;
+  left: 10px; /* Adjust as needed based on the desired distance from the left */
 }
