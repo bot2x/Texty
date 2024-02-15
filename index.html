@@ -3,10 +3,36 @@
 <html>
     <head>
         <title>Texty</title>
+        <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <div id="editor">
+        <!-- <div id="editor">
             This is where the editor will live and evolve.
+        </div> -->
+
+        <div id="top_container">
+            <nav>This will be the nav bar</nav>
+            <div id="contain_editors" contenteditable="true">
+                <div id="file1" class="tabcontent">This is the content from <strong>File 1</strong></div>
+                <div id="file2" class="tabcontent">This is the content from <strong>File 2</strong></div>
+            </div>
+            <div id="contain_tablinks">
+                <button id="tab-file1" class="button_effect tablink" onclick="openTab(this)">File1</button>
+                <button id="tab-file2" class="button_effect tablink" onclick="openTab(this)">File2</button>
+
+                <button id="add_tab" class="button_effect" onclick="addTab(this)">New File +</button>
+            </div>
         </div>
+        
+        
+        <script type="text/javascript" src="js/layout/filecontrols.js"></script>
+        <script type="text/javascript" src="js/layout/tablayout.js"></script>
+        <script>          
+            fc = FileController(2);
+            
+            document.getElementById("tab-file1").click();
+            document.getElementById("tab-file1").focus();
+
+        </script>
     </body>
 </html>
