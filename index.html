@@ -1,55 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Editable Text Editor with Line Numbers</title>
-<style>
-    #editor {
-        position: relative;
-        width: 400px;
-        border: 1px solid #ccc;
-        overflow-x: auto;
-        white-space: pre-wrap;
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 Line Numbers for Textarea</title>
+    <style>
+      .editor {
+        display: inline-flex;
+        gap: 10px;
         font-family: monospace;
-    }
-    #editor .line-number {
-        position: absolute;
-        left: 0;
-        width: 30px;
-        height: 100%;
-        border-right: 1px solid #ccc;
+        line-height: 21px;
+        background: #282a3a;
+        border-radius: 2px;
+        padding: 20px 10px;
+        height: 200px;
+        overflow-y: auto;
+      }
+
+      .line-numbers {
+        width: 20px;
         text-align: right;
-        pointer-events: none;
-    }
-    #editor .content {
-        padding-left: 32px; /* Adjust as needed */
-    }
-</style>
-</head>
-<body>
-<div id="editor">
-    <div class="line-number"></div>
-    <div class="content" contenteditable="true"></div>
-</div>
+        height: 9999px;
+      }
 
-<script>
-    const editor = document.getElementById("editor");
-    const content = editor.querySelector(".content");
-    const lineNumber = editor.querySelector(".line-number");
+      .line-numbers span {
+        counter-increment:  linenumber;
+      }
 
-    function updateLineNumbers() {
-        const lines = content.innerText.split("\n");
-        const lineCount = lines.length;
-        let lineNumbersHTML = "";
-        for (let i = 1; i <= lineCount; i++) {
-            lineNumbersHTML += i + "<br>";
+      .line-numbers span::before {
+        content: counter(linenumber);
+        display: block;
+        color: #506882;
+      }
+
+      textarea {
+        height: 9999px;
+        line-height: 21px;
+        overflow-y: hidden;
+        padding: 0;
+        border: 0;
+        background: #282a3a;
+        color: #FFF;
+        min-width: 500px;
+        outline: none;
+        resize: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="editor">
+      <div class="line-numbers">
+        <span></span>
+      </div>
+      <textarea></textarea>
+    </div>
+
+    <script>
+      const textarea = document.querySelector('textarea')
+      const lineNumbers = document.querySelector('.line-numbers')
+
+      textarea.addEventListener('keyup', event => {
+        const numberOfLines = event.target.value.split('\n').length
+
+        lineNumbers.innerHTML = Array(numberOfLines)
+          .fill('<span></span>')
+          .join('')
+      })
+
+      textarea.addEventListener('keydown', event => {
+        if (event.key === 'Tab') {
+          const start = textarea.selectionStart
+          const end = textarea.selectionEnd
+
+          textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end)
+          textarea.focus()      
+
+          event.preventDefault()
         }
-        lineNumber.innerHTML = lineNumbersHTML;
-    }
-
-    content.addEventListener("input", updateLineNumbers);
-    updateLineNumbers(); // Call initially to set line numbers
-</script>
-</body>
+      })
+    </script>
+  </body>
 </html>
