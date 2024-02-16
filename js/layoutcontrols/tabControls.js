@@ -1,31 +1,99 @@
+numOfTabLayouts = 0 //this is global variable. Wrap this in a function later.
+ 
+
 //This is going to be the main function class which will coordinate all tab related operations.
-function TabController(numTabs) {
+function TabController(numTabs=0) {
     let nTabs = numTabs;
     // let openTabs = [];
+    const selfRef = this;
 
-    function doSetup() {
-        console.log ("do setup is called.");
+    function getThis() {
+        return selfRef;
+    }
+
+    function initTabLayout (tabContainerRef) {
+        if (!tabContainerRef) alert("[Undefined Reference] Cannot create a tab layout without the container reference.");
+
+        const tabEditor = getTabParentContainers();
+        let tabs = null;
+
+        for (let tn=1; tn<=nTabs; tn++){
+            tabs = getTabDivPair(tn);
+
+            tabEditor.editorContainer.appendChild(tabs.tabcontent);
+            tabEditor.linkContainer.appendChild(tabs.tablink);
+        }
+
+        console.log(tabEditor);
+
+        //add the add more button
+        tabEditor.linkContainer.appendChild(getAddTabButton());
+
+        //Insert the tab layout in the DOM.
+        tabContainerRef.appendChild(tabEditor.navBar);
+        tabContainerRef.appendChild(tabEditor.editorContainer);
+        tabContainerRef.appendChild(tabEditor.linkContainer);
+
+        //Hydrate the added components in the DOM.
+        doHydrate(tabEditor);
+        
+        //Select the first tab as a default behavior.
+        tabEditor.linkContainer.firstElementChild.click();
+        
+        //incr the global counter.
+        numOfTabLayouts++;
+    }
+
+    function doHydrate(tabEditorRef=null) {
+        console.log ("do hydration is called.");
         handleTabEvents = tabEventHandlers();
 
         // console.log(handleTabEvents.openTabHandler);
+        // if (tabContainerRef) {
+        //     //Let walk the container elements to hydrate them.
+        //     for (const child of tabContainerRef.children) {
+        //         if (child.id.startsWith("contain_tablinks")) {
+        //             for (const cn of child.children) {
+        //                 if (cn.id.startsWith("tab-file")){
+        //                     cn.addEventListener('click', () => handleTabEvents.openTabHandler(cn));
+        //                 }
+        //                 if (cn.id.startsWith("add_tab")) {
+        //                     cn.addEventListener('click', () => handleTabEvents.addTabHandler(cn));
+        //                 }
+        //             }
+        //         }
+        //     }
+        // } 
+        if (tabEditorRef) {
+            for (const cn of tabEditorRef.linkContainer.children) {
+                if (cn.id.startsWith("tab-file")){
+                    cn.addEventListener('click', () => handleTabEvents.openTabHandler(cn, getThis()));
+                }
+                if (cn.id.startsWith("add_tab")) {
+                    cn.addEventListener('click', () => handleTabEvents.addTabHandler(cn, getThis()));
+                }
+            }
 
-        //attach event listeners.
-        tabButtons = document.getElementsByClassName("tablink");
-        addTabButton = document.getElementById("add_tab");
+        } else {
+            //To apply for manually created ones.
 
-        Array.from(tabButtons).forEach((t) => {
-            
-        console.log(t.className);
+            //attach event listeners.
+            tabButtons = document.getElementsByClassName("tablink");
+            addTabButton = document.getElementById("add_tab");
 
-            t.addEventListener('click', () => handleTabEvents.openTabHandler(t));
-        });
+            Array.from(tabButtons).forEach((t) => {
+                
+            console.log(t.className);
 
-        addTabButton.addEventListener('click', () => handleTabEvents.addTabHandler(addTabButton));
+                t.addEventListener('click', () => handleTabEvents.openTabHandler(t));
+            });
 
+            addTabButton.addEventListener('click', () => handleTabEvents.addTabHandler(addTabButton));
+        }
         console.log("hydration is finished.");
     }
     //Setup the tab layout and hydrate it.
-    doSetup();
+    // doHydrate(); //Moving this as a step for initTabLayout.
 
     //this will hold the html ref for the currently selected tab. To be used by other modules for context management.
     let selectedTabRef = {
@@ -60,6 +128,8 @@ function TabController(numTabs) {
         totalOpenTabs,
         selectThisTab,
         getCurrentTabRef,
+        initTabLayout,
+        // getThis,
     };
 }
 
@@ -67,7 +137,7 @@ function TabController(numTabs) {
 function tabEventHandlers () {
     console.log("tab event handler instantiated.");
 
-    const openTabHandler = (element) => {
+    const openTabHandler = (element, tcRef = null) => {
 
         console.log("open tab got called.");
         //Hide all the tabs
@@ -85,22 +155,38 @@ function tabEventHandlers () {
         const tabcontentToHighlight = getContainerForTab(element);
         tabcontentToHighlight.style.display = "block";
         
-        tc.selectThisTab(element, doClick=false);
+        if (tcRef)
+            tcRef.selectThisTab(element, doClick=false); 
+        else
+            tc.selectThisTab(element, doClick=false);
     }
 
-    const addTabHandler = (element) => {
+    const addTabHandler = (element, tcRef = null) => {
 
-        console.log(tc.totalOpenTabs());
+        let fileNum = 0;
+        if (tcRef) {
+            console.log(tcRef.totalOpenTabs());
+            
+            tcRef.incrTabs();
+            fileNum = tcRef.totalOpenTabs();
 
-        tc.incrTabs();
-        const fileNum = tc.totalOpenTabs();
+            tablink_container = element.parentNode; //document.getElementById("contain_tablinks");
+            tab_container = tablink_container.previousSibling;
 
-        tab_container = document.getElementById("contain_editors");
-        tablink_container = document.getElementById("contain_tablinks");
+        } else {
+            console.log(tc.totalOpenTabs());
+
+            tc.incrTabs();
+            fileNum = tc.totalOpenTabs();
+
+            tab_container = document.getElementById("contain_editors");
+            tablink_container = document.getElementById("contain_tablinks");
+        }
 
         let div_tab = document.createElement("div");
         div_tab.id = `file${fileNum}`;
         div_tab.className = "tabcontent";
+        div_tab.contentEditable="true";
         div_tab.innerHTML = `Start typings in file - ${fileNum}`;
 
         // let div_tab = `<div id="file${fileNum}" class="tabcontent">Start typings ..... </div>`
@@ -119,7 +205,10 @@ function tabEventHandlers () {
         // document.getElementById(button_tab.id).className += " button_effect tablink";
 
         //click the newly added button to select it.
-        tc.selectThisTab(button_tab);
+        if (tcRef) 
+            tcRef.selectThisTab(button_tab);
+        else
+            tc.selectThisTab(button_tab);
     }
 
     return {

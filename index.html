@@ -11,26 +11,29 @@
         </div> -->
 
         <div id="top_container">
-            <nav>This will be the nav bar</nav>
-            <div id="contain_editors" contenteditable="true">
-                <div id="file1" class="tabcontent">This is the content from <strong>File 1</strong></div>
-                <div id="file2" class="tabcontent">This is the content from <strong>File 2</strong></div>
+            <!-- <nav>This will be the nav bar</nav>
+            <div id="contain_editors">
+                <div id="file1" class="tabcontent" contentEditable="true">This is the content from <strong>File 1</strong></div>
+                <div id="file2" class="tabcontent" contentEditable="true">This is the content from <strong>File 2</strong></div>
             </div>
             <div id="contain_tablinks">
                 <button id="tab-file1" class="button_effect tablink">File1</button>
                 <button id="tab-file2" class="button_effect tablink">File2</button>
 
                 <button id="add_tab" class="button_effect">New File +</button>
-            </div>
+            </div> -->
         </div>
         
         
         <script type="text/javascript" src="js/layoutcontrols/tabControls.js"></script>
         <script type="text/javascript" src="js/utils/tabFunctions.js"></script>
         <script>          
+            
             tc = TabController(2);
             
-            tc.selectThisTab(document.getElementById("tab-file1"));
+            // tc.selectThisTab(document.getElementById("tab-file1"));
+
+            tc.initTabLayout(document.getElementById("top_container"));
 
         </script>
     </body>
