@@ -3,6 +3,7 @@
 <html>
     <head>
         <title>Texty</title>
+        <meta charset="UTF-8">
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
@@ -10,9 +11,9 @@
             This is where the editor will live and evolve.
         </div> -->
 
-        <div style="display: flex;">
-            <div id="top-container-1" class="top_container" style="height: 300px;width: 300px;"></div>
-            <div id="top-container-2" class="top_container" style="height: 300px;width: 300px;"></div>
+        <div style="display: flex; height: 100%;">
+            <div id="top-container-1" class="top_container"></div>
+            <div id="top-container-2" class="top_container"></div>
         </div>
 
         <script type="text/javascript" src="js/layoutcontrols/layoutprovide.js"></script>
@@ -20,13 +21,9 @@
         <script type="text/javascript" src="js/utils/tabFunctions.js"></script>
         <script>
             
-            // tc = TabController(2);
-            
-            // tc.selectThisTab(document.getElementById("tab-file1"));
-
-            // tc.initTabLayout(document.getElementById("top_container"));
             tp = TabLayoutProvider();
-            // tp.createLayout(document.getElementById("top_container"), nTabs=3);
+            const layout1ID = tp.createLayout(document.getElementById("top-container-1"), nTabs=3);
+            const layout2ID = tp.createLayout(document.getElementById("top-container-2"), nTabs=4);
 
         </script>
     </body>
