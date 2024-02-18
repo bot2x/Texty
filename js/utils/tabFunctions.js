@@ -44,13 +44,25 @@ function getTabDivPair (tabN, tablayoutId) {
     let button_tab = document.createElement("button");
     button_tab.id = `layout${tablayoutId}.tab-file${tabN}`;
     button_tab.className = `button_effect tablink belongs_to_layout_${tablayoutId}`;
-    button_tab.innerHTML = `File${tabN}`;
-    //Avoid this here. This will be done during hydration stage.
-    // button_tab.addEventListener('click', () => openTabHandler(button_tab));
+
+    // button_tab.innerHTML = `File${tabN}`;
+    
+    let tab_name = document.createElement("span");
+    tab_name.id = `layout${tablayoutId}.file${tabN}.filename`;
+    tab_name.innerHTML = `File ${tabN}`;
+    
+    let close_tab = document.createElement("div");
+    close_tab.id = `layout${tablayoutId}.file${tabN}.close`;
+    close_tab.className = "closeTab";
+    close_tab.innerHTML = " x ";
+
+    button_tab.appendChild(tab_name);
+    button_tab.appendChild(close_tab);
 
     return {
         tabcontent : div_tab,
         tablink : button_tab,
+        closetab : close_tab
     }
 }
 

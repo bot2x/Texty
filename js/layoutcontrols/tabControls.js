@@ -5,7 +5,8 @@
 function TabController(numTabs=0, tablayoutId=0) {
     let myTabLayoutId = tablayoutId;
     let nTabs = numTabs;
-    
+    const activeTabIds = new Set();
+
     //this will hold the html ref for the currently selected tab. To be used by other modules for context management.
     let selectedTabRef = {
         container : null,
@@ -23,6 +24,8 @@ function TabController(numTabs=0, tablayoutId=0) {
 
             tabEditor.editorContainer.appendChild(tabs.tabcontent);
             tabEditor.linkContainer.appendChild(tabs.tablink);
+
+            addTabId(tn);
         }
 
         console.log(tabEditor);
@@ -55,7 +58,8 @@ function TabController(numTabs=0, tablayoutId=0) {
         if (tabEditorRef) {
             for (const cn of tabEditorRef.linkContainer.children) {
                 if (cn.id.startsWith(`layout${myTabLayoutId}.tab-file`)){
-                    cn.addEventListener('click', () => handleTabEvents.openTabHandler(cn, tabControllerRef));
+                    cn.addEventListener('click', () => handleTabEvents.openTabHandler(cn, tabControllerRef)); //Attach select this tab handler.
+                    cn.lastChild.addEventListener('click', (evt) => handleTabEvents.closeTabHandler(evt, cn.lastChild, tabControllerRef)); //attach close tab handler.
                 }
                 if (cn.id === `layout${myTabLayoutId}.add_tab`) {
                     cn.addEventListener('click', () => handleTabEvents.addTabHandler(cn, tabControllerRef));
@@ -75,9 +79,29 @@ function TabController(numTabs=0, tablayoutId=0) {
     function incrTabs () {
         nTabs += 1;
     }
+    function decrTabs () {
+        nTabs -= 1;
+    }
 
     function totalOpenTabs () {
         return nTabs;
+    }
+
+    function getNewTabId () {
+        let tabid = 0;
+        while (activeTabIds.has(++tabid));
+        // activeTabIds.add(numTabs); //dont add here. add after the creation is successful.
+        return tabid;
+
+    }
+
+    function addTabId (tabId) {
+        //todo : sanity checks to be added and fallbacks to be implemented.
+        activeTabIds.add(tabId);
+    }
+
+    function remmoveTabId (tabId) {
+        activeTabIds.delete(tabId);
     }
 
     function selectThisTab (tabButtonRef, doClick = true) {
@@ -85,12 +109,34 @@ function TabController(numTabs=0, tablayoutId=0) {
             tabButtonRef.click();
             tabButtonRef.focus();
         }
-        console.log("before : ", selectedTabRef);
         selectedTabRef.tabButton = tabButtonRef;
         selectedTabRef.container = getContainerForTab(tabButtonRef);
-        console.log("after : ", selectedTabRef);
     }
 
+    function closeThisTab(closeTabRef) {
+        const buttonTabRef = closeTabRef.parentNode;
+        let prevTabButtonRef = null;
+
+        if (buttonTabRef === selectedTabRef.tabButton) {
+            //We are trying to close the tab which is selected. We need to move the focus to the previous tab.
+            prevTabButtonRef = buttonTabRef.previousSibling;
+        }
+        const editorTabRef= getContainerForTab(buttonTabRef);
+
+        //We have the refs to both button and the editor. Remove them and click the prevTabButton is it exists.
+        editorTabRef.remove();
+        buttonTabRef.remove();
+        
+        //hacking this now. Implement a proper tabid structure to stop having to write messy code.
+        let tabid = closeTabRef.id.split('.')[1].split('file')[1];
+        console.log(tabid);
+        remmoveTabId(parseInt(tabid));
+        decrTabs();
+
+        if (prevTabButtonRef) {
+            selectThisTab(prevTabButtonRef);
+        }
+    }
     function getCurrentTabRef () {
         return selectedTabRef;
     }
@@ -105,6 +151,10 @@ function TabController(numTabs=0, tablayoutId=0) {
         initTabLayout,
         doHydrate,
         getMyTabLayoutId,
+        closeThisTab,
+        getNewTabId,
+        addTabId,
+        remmoveTabId,
     };
 }
 
@@ -157,8 +207,8 @@ function tabEventHandlers () {
         let fileNum = 0;
         console.log(tcRef.totalOpenTabs());
         
-        tcRef.incrTabs();
-        fileNum = tcRef.totalOpenTabs();
+        // tcRef.incrTabs();
+        fileNum = tcRef.getNewTabId();
 
         tablink_container = element.parentNode;
         tab_container = tablink_container.previousSibling;
@@ -168,18 +218,33 @@ function tabEventHandlers () {
 
         const div_tab = tabInfo.tabcontent;
         const button_tab = tabInfo.tablink;
+        const close_tab = tabInfo.closetab;
 
         button_tab.addEventListener('click', () => openTabHandler(button_tab, tcRef));
+        close_tab.addEventListener('click', (evt) => closeTabHandler(evt, close_tab, tcRef));
 
         tab_container.appendChild(div_tab);
         tablink_container.insertBefore(button_tab, element);
+        tcRef.addTabId(fileNum);
 
         //click the newly added button to select it.
         tcRef.selectThisTab(button_tab);
     }
 
+    function closeTabHandler(evt, element, tcRef) {
+        if (!tcRef) {
+            alert("[Undefined Reference] TabController instance missing.");
+            return;
+        }
+        evt.stopPropagation();
+
+        tcRef.closeThisTab(element);
+
+    }
+
     return {
         openTabHandler,
         addTabHandler,
+        closeTabHandler,
     }
 }
