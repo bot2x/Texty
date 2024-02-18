@@ -3,10 +3,28 @@
 <html>
     <head>
         <title>Texty</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <div id="editor">
+        <!-- <div id="editor">
             This is where the editor will live and evolve.
+        </div> -->
+
+        <div style="display: flex; height: 100%;">
+            <div id="top-container-1" class="top_container"></div>
+            <div id="top-container-2" class="top_container"></div>
         </div>
+
+        <script type="text/javascript" src="js/layoutcontrols/layoutprovide.js"></script>
+        <script type="text/javascript" src="js/layoutcontrols/tabControls.js"></script>
+        <script type="text/javascript" src="js/utils/tabFunctions.js"></script>
+        <script>
+            
+            tp = TabLayoutProvider();
+            const layout1ID = tp.createLayout(document.getElementById("top-container-1"), nTabs=3);
+            const layout2ID = tp.createLayout(document.getElementById("top-container-2"), nTabs=4);
+
+        </script>
     </body>
 </html>
