@@ -37,8 +37,42 @@ function getTabDivPair (tabN, tablayoutId) {
     let div_tab = document.createElement("div");
     div_tab.id = `layout${tablayoutId}.file${tabN}`;
     div_tab.className = `tabcontent belongs_to_layout_${tablayoutId}`;
-    div_tab.contentEditable="true";
-    div_tab.innerHTML = `Start typings in file - ${tabN}`;
+    // div_tab.classList.add("editor");
+    // div_tab.contentEditable="true";
+
+    
+    // Create a div for linenumbers with the class "line-numbers"
+    var lineNumbersDiv = document.createElement("div");
+    lineNumbersDiv.classList.add("line-numbers");
+    lineNumbersDiv.innerHTML = '<span></span>';
+    
+    // Create a textarea element
+    var textarea = document.createElement("textarea");
+    textarea.innerHTML = `Start typings in file - ${tabN}`;
+
+    // Append the lineNumbersDiv and textarea to the parentDiv
+    div_tab.appendChild(lineNumbersDiv);
+    div_tab.appendChild(textarea);
+
+    textarea.addEventListener('keyup', event => {
+        const numberOfLines = event.target.value.split('\n').length
+
+        lineNumbersDiv.innerHTML = Array(numberOfLines)
+        .fill('<span></span>')
+        .join('')
+    })
+
+    textarea.addEventListener('keydown', event => {
+    if (event.key === 'Tab') {
+        const start = textarea.selectionStart
+        const end = textarea.selectionEnd
+
+        textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end)
+        textarea.focus()      
+
+        event.preventDefault()
+    }
+    })
 
     // let div_tab = `<div id="file${fileNum}" class="tabcontent">Start typings ..... </div>`
     let button_tab = document.createElement("button");

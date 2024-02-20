@@ -192,7 +192,7 @@ function tabEventHandlers () {
         const tabcontentToHighlight = getContainerForTab(element);
         console.log(tabcontentToHighlight);
 
-        tabcontentToHighlight.style.display = "block";
+        tabcontentToHighlight.style.display = "inline-flex";
         element.classList.add("selected_tab_button");
         
         tcRef.selectThisTab(element, doClick=false);   

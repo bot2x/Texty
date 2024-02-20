@@ -29,25 +29,6 @@ function recordEvent(eventType,e) {
     // console.log(eventStack);
 }
 
-
-function updateLineNumbers() {
-
-    console.log("TEXT",editor.innerText);
-    let lines = editor.innerText.split("\n");
-    let lineCount = lines.length;
-
-    let lineNumbers = "";
-    for (let i = 1; i <= lineCount; i++) {
-        lineNumbers += (i) + "\n";
-    }
-
-    editor.setAttribute("data-line", lineNumbers);
-}
-
-
-// Add oninput event listener to call updateLineNumbers function
-editor.addEventListener("input", updateLineNumbers);
-
 // Event listeners to record events
 editor.addEventListener('keydown', function(e) {
     recordEvent('keydown',e);
