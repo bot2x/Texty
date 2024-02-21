@@ -66,6 +66,14 @@ function TabController(numTabs=0, tablayoutId=0) {
                 }
             }
 
+            // var text_box = tabEditorRef.editorContainer.getElementsByClassName('editor');
+            // var line_numbers = tabEditorRef.editorContainer.getElementsByClassName('line-numbers');
+            
+            // for (let i = 0; i < text_box.length; i++) {
+            //     handleTabEvents.lineNumberHandler(text_box[i], line_numbers[i]);
+            // }
+
+
         }
         console.log("hydration is finished.");
     }
@@ -242,9 +250,37 @@ function tabEventHandlers () {
 
     }
 
+
+    const lineNumberHandler = (text_element,line_number_element) => {
+        console.log("line number handler got called.");
+        text_element.style.minHeight = text_element.clientHeight + 'px';
+        var currentHeight = text_element.clientHeight;
+        var lineHeight = currentHeight;
+        
+        text_element.addEventListener('input', function() {
+            if (text_element.clientHeight !== currentHeight) {
+            currentHeight = text_element.clientHeight;
+            var lines = currentHeight / lineHeight;
+            var nums = line_number_element;
+            console.log("nums",nums);
+            nums.innerHTML = '';
+            for (var i = 1; i < lines + 1; i++) {
+                var span = document.createElement('span');
+                span.textContent = i;
+                nums.appendChild(span);
+            }
+            }
+        });
+
+        
+    }
+
+
+
     return {
         openTabHandler,
         addTabHandler,
         closeTabHandler,
+        lineNumberHandler
     }
 }

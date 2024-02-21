@@ -46,33 +46,34 @@ function getTabDivPair (tabN, tablayoutId) {
     lineNumbersDiv.classList.add("line-numbers");
     lineNumbersDiv.innerHTML = '<span></span>';
     
-    // Create a textarea element
-    var textarea = document.createElement("textarea");
-    textarea.innerHTML = `Start typings in file - ${tabN}`;
+    // Create a editable div element
+    var text_box = document.createElement("div");
+    text_box.contentEditable="true";
+    text_box.classList.add("editor");
+    text_box.innerHTML = `Start typings in file - ${tabN}`;
 
     // Append the lineNumbersDiv and textarea to the parentDiv
     div_tab.appendChild(lineNumbersDiv);
-    div_tab.appendChild(textarea);
+    div_tab.appendChild(text_box);
 
-    textarea.addEventListener('keyup', event => {
-        const numberOfLines = event.target.value.split('\n').length
-
-        lineNumbersDiv.innerHTML = Array(numberOfLines)
-        .fill('<span></span>')
-        .join('')
-    })
-
-    textarea.addEventListener('keydown', event => {
-    if (event.key === 'Tab') {
-        const start = textarea.selectionStart
-        const end = textarea.selectionEnd
-
-        textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end)
-        textarea.focus()      
-
-        event.preventDefault()
-    }
-    })
+    text_box.style.minHeight = text_box.clientHeight + 'px';
+    var currentHeight = text_box.clientHeight;
+    var lineHeight = currentHeight;
+    
+    text_box.addEventListener('input', function() {
+        if (text_box.clientHeight !== currentHeight) {
+        currentHeight = text_box.clientHeight;
+        var lines = currentHeight / lineHeight;
+        var nums = lineNumbersDiv;
+        console.log("nums",nums);
+        nums.innerHTML = '';
+        for (var i = 1; i < lines + 1; i++) {
+            var span = document.createElement('span');
+            span.textContent = i;
+            nums.appendChild(span);
+        }
+        }
+    });
 
     // let div_tab = `<div id="file${fileNum}" class="tabcontent">Start typings ..... </div>`
     let button_tab = document.createElement("button");
