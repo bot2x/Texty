@@ -66,12 +66,13 @@ function TabController(numTabs=0, tablayoutId=0) {
                 }
             }
 
-            // var text_box = tabEditorRef.editorContainer.getElementsByClassName('editor');
-            // var line_numbers = tabEditorRef.editorContainer.getElementsByClassName('line-numbers');
+            var text_box = tabEditorRef.editorContainer.getElementsByClassName('editor');
+            var line_numbers = tabEditorRef.editorContainer.getElementsByClassName('line-numbers');
             
-            // for (let i = 0; i < text_box.length; i++) {
-            //     handleTabEvents.lineNumberHandler(text_box[i], line_numbers[i]);
-            // }
+            // Add handler for line numbers and Tab input.
+            Array.from(text_box).forEach((textBox, index) => {
+                handleTabEvents.lineNumberAndTabHandler(textBox, line_numbers[index]);
+            });
 
 
         }
@@ -251,26 +252,44 @@ function tabEventHandlers () {
     }
 
 
-    const lineNumberHandler = (text_element,line_number_element) => {
-        console.log("line number handler got called.");
-        text_element.style.minHeight = text_element.clientHeight + 'px';
-        var currentHeight = text_element.clientHeight;
-        var lineHeight = currentHeight;
-        
-        text_element.addEventListener('input', function() {
-            if (text_element.clientHeight !== currentHeight) {
-            currentHeight = text_element.clientHeight;
-            var lines = currentHeight / lineHeight;
-            var nums = line_number_element;
-            console.log("nums",nums);
-            nums.innerHTML = '';
-            for (var i = 1; i < lines + 1; i++) {
-                var span = document.createElement('span');
-                span.textContent = i;
-                nums.appendChild(span);
+    const lineNumberAndTabHandler = (text_element,line_number_element) => {
+        var num_of_lines = 1;
+        text_element.style.minHeight = parseFloat(getComputedStyle(text_element).lineHeight) + 'px';
+        text_element.addEventListener('input', function(event) {
+            var lineHeight = parseFloat(getComputedStyle(text_element).lineHeight);
+            var currentHeight = text_element.scrollHeight;
+            var lines = parseInt(currentHeight / lineHeight);
+            
+            // Update line number only if there is a change in number of line numbers
+            if (lines !== num_of_lines) {
+                num_of_lines = lines;
+                line_number_element.innerHTML = '';
+                for (var j = 1; j < lines + 1; j++) {
+                    var span = document.createElement('span');
+                    span.textContent = j;
+                    line_number_element.appendChild(span);
+                }
             }
+
+        });
+
+        // Handle Tab key press in the text editor
+        text_element.addEventListener('keydown', function(e) {
+            if (e.keyCode === 9) {
+                e.preventDefault();
+                // Insert a tab character
+                const selection = window.getSelection();
+                const tabNode = document.createTextNode('\t');
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(tabNode);
+                range.setStartAfter(tabNode);
+                range.setEndAfter(tabNode);
+                selection.removeAllRanges();
+                selection.addRange(range);
             }
         });
+        text_element.style.whiteSpace = 'pre-wrap';
 
         
     }
@@ -281,6 +300,6 @@ function tabEventHandlers () {
         openTabHandler,
         addTabHandler,
         closeTabHandler,
-        lineNumberHandler
+        lineNumberAndTabHandler
     }
 }

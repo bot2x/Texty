@@ -86,33 +86,23 @@ body {
 }
 
 .line-numbers {
-    width: 20px;
+    display: flex;
+    flex-direction: column;
+    /* width: 20px; */
     text-align: right;
     height: 9999px;
-    font-size: 15px;
+    font-size: 18px;
+    color:#999;
+    line-height: 25px;
   }
 
-  .line-numbers span {
-    counter-increment:  linenumber;
-  }
-
-  .line-numbers span::before {
-    content: counter(linenumber);
-    display: block;
-    color: #506882;
-  }
-
-textarea {
-    height: 9999px;
-    line-height: 21px;
-    overflow-y: auto;
-    padding: 0;
-    border: 0;
-    background: #282a3a;
-    color: #FFF;
-    min-width: 500px;
+  .editor{
+    height: 0px;
+    width: 100%;
+    border: none;
+    font-size: 20px;
+    line-height: 25px;
     outline: none;
-    resize: none;
   }
 
 .tablink {

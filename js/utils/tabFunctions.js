@@ -44,7 +44,7 @@ function getTabDivPair (tabN, tablayoutId) {
     // Create a div for linenumbers with the class "line-numbers"
     var lineNumbersDiv = document.createElement("div");
     lineNumbersDiv.classList.add("line-numbers");
-    lineNumbersDiv.innerHTML = '<span></span>';
+    lineNumbersDiv.innerHTML = '<span>1</span>';
     
     // Create a editable div element
     var text_box = document.createElement("div");
@@ -55,25 +55,6 @@ function getTabDivPair (tabN, tablayoutId) {
     // Append the lineNumbersDiv and textarea to the parentDiv
     div_tab.appendChild(lineNumbersDiv);
     div_tab.appendChild(text_box);
-
-    text_box.style.minHeight = text_box.clientHeight + 'px';
-    var currentHeight = text_box.clientHeight;
-    var lineHeight = currentHeight;
-    
-    text_box.addEventListener('input', function() {
-        if (text_box.clientHeight !== currentHeight) {
-        currentHeight = text_box.clientHeight;
-        var lines = currentHeight / lineHeight;
-        var nums = lineNumbersDiv;
-        console.log("nums",nums);
-        nums.innerHTML = '';
-        for (var i = 1; i < lines + 1; i++) {
-            var span = document.createElement('span');
-            span.textContent = i;
-            nums.appendChild(span);
-        }
-        }
-    });
 
     // let div_tab = `<div id="file${fileNum}" class="tabcontent">Start typings ..... </div>`
     let button_tab = document.createElement("button");
