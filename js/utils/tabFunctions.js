@@ -37,8 +37,24 @@ function getTabDivPair (tabN, tablayoutId) {
     let div_tab = document.createElement("div");
     div_tab.id = `layout${tablayoutId}.file${tabN}`;
     div_tab.className = `tabcontent belongs_to_layout_${tablayoutId}`;
-    div_tab.contentEditable="true";
-    div_tab.innerHTML = `Start typings in file - ${tabN}`;
+    // div_tab.classList.add("editor");
+    // div_tab.contentEditable="true";
+
+    
+    // Create a div for linenumbers with the class "line-numbers"
+    var lineNumbersDiv = document.createElement("div");
+    lineNumbersDiv.classList.add("line-numbers");
+    lineNumbersDiv.innerHTML = '<span>1</span>';
+    
+    // Create a editable div element
+    var text_box = document.createElement("div");
+    text_box.contentEditable="true";
+    text_box.classList.add("editor");
+    text_box.innerHTML = `Start typings in file - ${tabN}`;
+
+    // Append the lineNumbersDiv and textarea to the parentDiv
+    div_tab.appendChild(lineNumbersDiv);
+    div_tab.appendChild(text_box);
 
     // let div_tab = `<div id="file${fileNum}" class="tabcontent">Start typings ..... </div>`
     let button_tab = document.createElement("button");

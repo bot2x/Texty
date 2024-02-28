@@ -72,8 +72,40 @@ body {
     height: 100%;
     width:100%;
     font-size: 1.6rem;
-    overflow: auto;
+    /* overflow: auto; */
+
+    display: inline-flex;
+    gap: 10px;
+    font-family: monospace;
+    line-height: 21px;
+    background: #282a3a;
+    border-radius: 2px;
+    padding: 20px 10px;
+    /* height: 200px; */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
+
+.line-numbers {
+    display: flex;
+    flex-direction: column;
+    /* width: 20px; */
+    text-align: right;
+    height: 9999px;
+    font-size: 18px;
+    color:#999;
+    line-height: 25px;
+  }
+
+  .editor{
+    height: 0px;
+    width: 100%;
+    border: none;
+    font-size: 20px;
+    line-height: 25px;
+    outline: none;
+    padding-right: 10px;
+  }
 
 .tablink {
     width : 110px;
