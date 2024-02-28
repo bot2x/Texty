@@ -66,6 +66,8 @@ function TabController(numTabs=0, tablayoutId=0) {
                 }
             }
 
+            //TODO : Move this inside a for loop to ensure a tight coupling withing editor and line-numbers divs
+            //similar to how it is done for tab buttons above.
             var text_box = tabEditorRef.editorContainer.getElementsByClassName('editor');
             var line_numbers = tabEditorRef.editorContainer.getElementsByClassName('line-numbers');
             
@@ -229,12 +231,24 @@ function tabEventHandlers () {
         const button_tab = tabInfo.tablink;
         const close_tab = tabInfo.closetab;
 
+        //attaching listeners to tab-btns.
         button_tab.addEventListener('click', () => openTabHandler(button_tab, tcRef));
         close_tab.addEventListener('click', (evt) => closeTabHandler(evt, close_tab, tcRef));
 
         tab_container.appendChild(div_tab);
         tablink_container.insertBefore(button_tab, element);
         tcRef.addTabId(fileNum);
+
+        //attach listener for add line on each added tab.
+        //Note : This needs to happen only after these nodes are added to the DOM since
+        //the logic relies on computed styles.
+        const text_box = div_tab.getElementsByClassName('editor');
+        const line_numbers = div_tab.getElementsByClassName('line-numbers');
+        
+        // Add handler for line numbers and Tab input.
+        Array.from(text_box).forEach((textBox, index) => {
+            lineNumberAndTabHandler(textBox, line_numbers[index]);
+        });
 
         //click the newly added button to select it.
         tcRef.selectThisTab(button_tab);
@@ -252,14 +266,36 @@ function tabEventHandlers () {
     }
 
 
-    const lineNumberAndTabHandler = (text_element,line_number_element) => {
+    const lineNumberAndTabHandler = (text_element, line_number_element) => {
         var num_of_lines = 1;
+        const lH = getComputedStyle(text_element).lineHeight;
+
+        console.log({
+            "DEBUG_BEFORE" : {
+                style : text_element.style.minHeight,
+                text_el : text_element,
+                line_numbers_el : line_number_element,
+                lineH : lH
+            }
+        });
+
         text_element.style.minHeight = parseFloat(getComputedStyle(text_element).lineHeight) + 'px';
+
+        console.log({
+            "DEBUG_AFTER" : {
+                style : text_element.style.minHeight,
+                text_el : text_element,
+                line_numbers_el : line_number_element,
+            }
+        });
+
+
         text_element.addEventListener('input', function(event) {
             var lineHeight = parseFloat(getComputedStyle(text_element).lineHeight);
             var currentHeight = text_element.scrollHeight;
             var lines = parseInt(currentHeight / lineHeight);
             
+            //TODO: Figure out a way to only add or delete a span instead of repeating the whole thing everytime.
             // Update line number only if there is a change in number of line numbers
             if (lines !== num_of_lines) {
                 num_of_lines = lines;
